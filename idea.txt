@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FileSystem
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Testing data to act as sucessful "file" requests
+            string[] testData = new string[] { "2", "4", "6", "8", "10", "12" };
+            // All the rows from a CSV file
+            string[] fileRows = File.ReadAllLines(@"C:\Users\Cristian\Desktop\TestFiles\testing.csv");
+            // Get the heading row for later use
+            string headingRow = fileRows[0];
+            // New lines for new CSV file
+            List<string> newLines = new List<string>();
+            // Location where new CSV file will be created
+            string newCSV = @"C:\Users\Cristian\Desktop\TestFiles\newCSV.csv";
+            // Iterate through each row, skipping the first colum
+            foreach (string row in fileRows.Skip(1))
+            {
+                // Split the row in columns
+                string[] rowColumns = row.Split(',');
+                // Create a new row
+                string[] newRow = rowColumns;
+                // Keep track of column index position
+                int columnCount = 1;
+                // Iterate through each of the columns, checking for sucessful "file" requests
+                foreach (var column in rowColumns.Skip(1))
+                {
+                    // If the file was sucessfully requested, mark if off the list
+                    if (testData.Contains(column))
+                    {
+                        newRow[columnCount] = "";
+                    }
+                    // Increment counter
+                    columnCount++;
+                }
+                // Rejoin the column data in a single string(row)
+                string newRowJoined = string.Join(",", newRow);
+                // Add the heading row as the first row
+                if (newLines.Count == 0)
+                {
+                    newLines.Add(headingRow);
+                    newLines.Add(newRowJoined);
+                }
+                else
+                {
+                    // Add remainder of the rows
+                    newLines.Add(newRowJoined);
+                }
+            }
+            // Append all the rows to the new CSV file
+            File.AppendAllLines(newCSV, newLines);
+
+
+            //File.AppendAllLines(newCSV, newContent);
+
+            //List<string> newLines = new List<string>();
+            //newLines.Add("this is the new line....");
+            //File.AppendAllLines("oldfile.dsv", newLines);
+        }
+    }
+}
